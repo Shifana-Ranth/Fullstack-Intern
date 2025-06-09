@@ -20,6 +20,7 @@ export default function ChatBox() {
       const data = await res.json();
       setResponse(data.reply);
     } catch (err) {
+      console.error(err); 
       setResponse("Error getting reply");
     } finally {
       setLoading(false);

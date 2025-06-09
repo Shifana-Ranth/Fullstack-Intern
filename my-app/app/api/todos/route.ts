@@ -8,7 +8,7 @@ interface Todo {
 }
 
 // ✅ Sample static todo items
-let todos: Todo[] = [
+const todos: Todo[] = [
   { id: 1, title: "Complete the screening test", completed: false },
   { id: 2, title: "Push code to GitHub", completed: false },
   { id: 3, title: "Deploy on Vercel", completed: false },

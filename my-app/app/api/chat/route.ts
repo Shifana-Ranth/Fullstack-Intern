@@ -8,6 +8,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ reply });
   } catch (error) {
+    console.error(error);
     return NextResponse.json(
       { error: 'Something went wrong in the chat route' },
       { status: 500 }
