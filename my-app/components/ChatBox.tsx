@@ -1,91 +1,134 @@
-"use client";
-import { useState } from "react";
+
+'use client';
+
+import { useState, useRef, useEffect } from 'react';
+
+interface Message {
+  role: 'user' | 'assistant';
+  content: string;
+}
 
 export default function ChatBox() {
-  const [input, setInput] = useState("");
-  const [response, setResponse] = useState("");
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const sendMessage = async () => {
+    if (!input.trim()) return;
+
+    const userMessage: Message = { role: 'user', content: input };
+    setMessages((prev) => [...prev, userMessage]);
+    setInput('');
     setLoading(true);
-    setResponse(""); // clear previous
 
     try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        body: JSON.stringify({ message: input }),
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userMessage.content }),
       });
 
       const data = await res.json();
-      setResponse(data.reply);
-    } catch (err) {
-      console.error(err); 
-      setResponse("Error getting reply");
+      const botMessage: Message = {
+        role: 'assistant',
+        content: data.reply || '🤖 Sorry, no reply received.',
+      };
+      setMessages((prev) => [...prev, botMessage]);
+    } catch (error) {
+      setMessages((prev) => [
+        ...prev,
+        { role: 'assistant', content: '❌ Error connecting to server.' },
+      ]);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    sendMessage();
+  };
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
   return (
     <div
       style={{
-        maxWidth: "600px",
-        margin: "50px auto",
-        padding: "20px",
-        backgroundColor: "#f5f5f5",
-        borderRadius: "12px",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-        fontFamily: "Arial",
+        maxWidth: '700px',
+        margin: '2rem auto',
+        padding: '1rem',
+        fontFamily: 'sans-serif',
+        backgroundColor: '#e6e6e6', // Light grey background
+        borderRadius: '10px',
+        boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
       }}
     >
-      <h2 style={{ textAlign: "center",color:"brown", marginBottom: "20px" }}>
-        💬 Simple AI Chat
-      </h2>
+      <h2 style={{ color:"Black",textAlign: 'center', marginBottom: '1rem' }}>💬 AI Chat</h2>
 
-      <form onSubmit={handleSubmit} style={{ display: "flex", gap: "10px" }}>
+      <div
+        style={{
+          backgroundColor: '#f4f4f4',
+          padding: '1rem',
+          height: '300px',
+          overflowY: 'auto',
+          borderRadius: '8px',
+        }}
+      >
+        {messages.map((msg, idx) => (
+          <div
+            key={idx}
+            style={{
+              marginBottom: '1rem',
+              backgroundColor: msg.role === 'user' ? '#d1e7ff' : '#fffbe6',
+              padding: '0.75rem 1rem',
+              borderRadius: '8px',
+              alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
+              color: msg.role === 'user' ? '#003366' : '#664d00',
+            }}
+          >
+            <strong>{msg.role === 'user' ? '🧑 You' : '🤖 AI'}:</strong>{' '}
+            {msg.content}
+          </div>
+        ))}
+        <div ref={scrollRef} />
+      </div>
+
+      <form
+        onSubmit={handleSubmit}
+        style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem' }}
+      >
         <input
           type="text"
           value={input}
+          placeholder="Type your message..."
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Type something..."
           style={{
-            flex: 1,
-            padding: "10px",
-            borderRadius: "8px",
-            border: "1px solid #ccc",
-            backgroundColor: "#ffffff", // ✅ white background
-            color: "#000000", 
-          }}
+          flex: 1,
+          padding: '0.6rem',
+          borderRadius: '5px',
+          border: '1px solid #999',
+          backgroundColor: '#e0e0e0',   // Light grey textbox
+          color: '#000',                // Black text
+        }}
         />
         <button
           type="submit"
+          disabled={loading}
           style={{
-            padding: "10px 20px",
-            borderRadius: "8px",
-            backgroundColor: "#0070f3",
-            color: "white",
-            border: "none",
+            padding: '0.6rem 1rem',
+            backgroundColor: '#0070f3',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
           }}
         >
-          {loading ? "Sending..." : "Send"}
+          {loading ? '...' : 'Send'}
         </button>
       </form>
-
-      {response && (
-        <div
-          style={{
-            marginTop: "20px",
-            padding: "15px",
-            borderRadius: "8px",
-            backgroundColor: "#ffffff",
-            color: "#333", // ✅ Dark text
-            border: "1px solid #ddd",
-          }}
-        >
-          <strong>AI:</strong> {response}
-        </div>
-      )}
     </div>
   );
 }

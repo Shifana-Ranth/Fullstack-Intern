@@ -3,11 +3,23 @@ import Link from 'next/link';
 
 export default function HomePage() {
   return (
-    <main style={{ padding: '2rem', fontFamily: 'Arial' }}>
+    <main style={{
+      padding: '2rem',
+      fontFamily: 'Arial',
+      height: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}>
       <h1>🚀 Full Stack + AI Internship Test</h1>
       <p>Click below to test each part:</p>
-
-      <ul style={{ listStyle: 'none', padding: 0, marginTop: '1rem' }}>
+      <ul style={{
+        listStyle: 'none',
+        padding: 0,
+        marginTop: '1rem',
+        textAlign: 'center',
+      }}>
         <li style={{ marginBottom: '1rem' }}>
           <Link href="/todos">
             <button style={btnStyle}>📋 Part 1 – To-Do API</button>

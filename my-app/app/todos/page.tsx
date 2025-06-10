@@ -1,3 +1,5 @@
+
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -12,14 +14,12 @@ export default function TodoPage() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodo, setNewTodo] = useState("");
 
-  // Fetch todos from API
   const fetchTodos = async () => {
     const res = await fetch('/api/todos');
     const data = await res.json();
     setTodos(data);
   };
 
-  // Add new todo via POST
   const handleAdd = async () => {
     if (!newTodo.trim()) return;
     await fetch('/api/todos', {
@@ -28,6 +28,24 @@ export default function TodoPage() {
       body: JSON.stringify({ title: newTodo })
     });
     setNewTodo("");
+    fetchTodos();
+  };
+
+  const handleToggleComplete = async (id: number) => {
+    await fetch('/api/todos', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    });
+    fetchTodos();
+  };
+
+  const handleDelete = async (id: number) => {
+    await fetch('/api/todos', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    });
     fetchTodos();
   };
 
@@ -55,7 +73,18 @@ export default function TodoPage() {
       <ul>
         {todos.map((todo) => (
           <li key={todo.id} style={{ marginBottom: "0.5rem" }}>
-            ✅ {todo.title}
+            <span style={{
+              textDecoration: todo.completed ? "line-through" : "none",
+              marginRight: "1rem"
+            }}>
+              {todo.title}
+            </span>
+            <button onClick={() => handleToggleComplete(todo.id)} style={{ marginRight: "0.5rem" }}>
+              ✅ {todo.completed ? "Undo" : "Complete"}
+            </button>
+            <button onClick={() => handleDelete(todo.id)} style={{ color: "red" }}>
+              ❌ Delete
+            </button>
           </li>
         ))}
       </ul>
