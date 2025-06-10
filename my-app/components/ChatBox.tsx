@@ -36,6 +36,7 @@ export default function ChatBox() {
       };
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
+      console.error(error);
       setMessages((prev) => [
         ...prev,
         { role: 'assistant', content: '❌ Error connecting to server.' },
