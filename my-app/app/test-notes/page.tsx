@@ -1,63 +1,58 @@
-import { listNotes } from "../../packages/integrations/notion/notesync/notesync.functions";
+'use client';
 
-export default function TestNotesPage() {
-  const notes = listNotes({ maxResults: 3, query: "project" });
+import { useEffect, useState } from 'react';
+
+interface Note {
+  id: number;
+  title: string;
+  content: string;
+}
+
+export default function PersonalInfoPage() {
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchNotes = async () => {
+      try {
+        const res = await fetch('/api/test-notes');
+        const data = await res.json();
+        setNotes(data);
+      } catch (err) {
+        console.error("Failed to fetch notes", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotes();
+  }, []);
 
   return (
-    <div>
-      <h1>Test Notesync Output</h1>
-      <pre>{JSON.stringify(notes, null, 2)}</pre>
+    <div style={{ padding: "2rem", fontFamily: "Arial" }}>
+      <h1 style={{ color: "white", marginBottom: "1rem" }}>📄 Personal Info Notes</h1>
+
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <ul style={{ listStyle: "none", padding: 0 }}>
+          {notes.map((note) => (
+            <li
+              key={note.id}
+              style={{
+                marginBottom: "1rem",
+                padding: "1rem",
+                backgroundColor: "#246A73",
+                color:"white",
+                border: "1px solid #ddd",
+                borderRadius: "8px",
+              }}
+            >
+              <strong>{note.title}:</strong> {note.content}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
-
-// 'use client';
-
-// import { useEffect, useState } from 'react';
-// import { listNotes } from "../../packages/integrations/notion/notesync/notesync.functions";
-
-// type Note = {
-//   id: number;
-//   title: string;
-// };
-
-// export default function TestNotesPage() {
-//   const [notes, setNotes] = useState<Note[]>([]);
-//   const [loading, setLoading] = useState(true);
-
-//   useEffect(() => {
-//     async function fetchNotes() {
-//       const result = listNotes({ maxResults: 3, query: "project" });
-//       setNotes(result);
-//       setLoading(false);
-//     }
-//     fetchNotes();
-//   }, []);
-
-//   return (
-//     <main style={{ padding: '2rem', fontFamily: 'Arial' }}>
-//       <h1>📝 Notesync Mock Output</h1>
-//       {loading ? (
-//         <p>Loading notes...</p>
-//       ) : (
-//         <ul style={{ listStyle: 'none', padding: 0 }}>
-//           {notes.map((note) => (
-//             <li
-//               key={note.id}
-//               style={{
-//                 padding: '1rem',
-//                 backgroundColor: '#ffffff',
-//                 color: '#000000',
-//                 marginBottom: '1rem',
-//                 borderRadius: '8px',
-//                 boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
-//               }}
-//             >
-//               <strong>🗒️ {note.title}</strong>
-//             </li>
-//           ))}
-//         </ul>
-//       )}
-//     </main>
-//   );
-// }
