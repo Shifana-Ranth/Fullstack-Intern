@@ -57,3 +57,75 @@ Planned module for document handling — UI prepared but backend pending.
 git clone https://github.com/Shifana-Ranth/Fullstack-Intern.git
 cd Fullstack-Intern
 npm install
+## Running Locally
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Open your browser and navigate to:
+
+```
+http://localhost:3000
+```
+
+---
+
+## Project Structure
+
+```
+.vscode/
+app/
+├── api/
+│   ├── chat/
+│   │   └── route.ts
+│   ├── test-notes/
+│   │   └── route.ts
+│   └── todos/
+│       └── route.ts
+├── chat/
+│   └── page.tsx
+├── components/
+│   └── ChatBot.tsx
+├── test-notes/
+│   └── page.tsx
+└── todos/
+    ├── page.tsx
+---
+
+## Navigation
+
+The home page (`/`) lists all projects with icons and buttons for navigation. Clicking a project button routes to the respective project page:
+
+| Project    | Route      | 
+|------------|------------|
+| Todo List  | `/todos`   | 
+| NoteSync   | `/test-notes`   | 
+| AI Chatbot | `/chat`    | 
+
+---
+
+## Deployment
+
+### Vercel (Recommended)
+
+1. Push your code to a GitHub repository.
+2. Import the repo to [Vercel](https://vercel.com/).
+3. Set up any environment variables needed (for AI keys, if any).
+4. Deploy and get the live URL.
+
+### Netlify
+
+1. Push code to GitHub.
+2. Connect your repo in [Netlify](https://netlify.com).
+3. Set build command: `npm run build`
+4. Set publish directory: `out` (if using static export) or default `.next`
+5. Deploy your site.
+
+---
+
+## License
+
+ © 2025 [Shifana Ranth](https://github.com/Shifana-Ranth)
